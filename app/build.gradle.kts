@@ -38,6 +38,10 @@ android {
     kapt {
         useBuildCache = false
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
