@@ -41,7 +41,7 @@ class DetayFragment : Fragment() {
 
     // database : ( declaration )
     private lateinit var db : DetailDatabase
-    private lateinit var tarifDao : DetailDAO
+    private lateinit var detayDao : DetailDAO
 
 
 
@@ -56,7 +56,7 @@ class DetayFragment : Fragment() {
             DetailDatabase::class.java ,
             "Detaylar"
         ).build()
-        tarifDao = db.detailDao()
+        detayDao = db.detailDao()
 
     }
 
@@ -100,7 +100,8 @@ class DetayFragment : Fragment() {
                 kucukBitmap.compress(Bitmap.CompressFormat.PNG , 50 ,outputStream)
                 val byteDizisi = outputStream.toByteArray()
 
-                val detay = Detail(name , detay , byteDizisi)
+                val detayInsert = Detail(name , detay , byteDizisi)
+                detayDao.insert(detayInsert)
 
             }
 
