@@ -1,4 +1,4 @@
-package com.fatihden.roomdatabase
+package com.fatihden.roomdatabase.UI
 
 import android.Manifest
 import android.content.Intent
@@ -19,9 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.decodeBitmap
 import com.fatihden.roomdatabase.databinding.FragmentDetayBinding
-import com.fatihden.roomdatabase.databinding.FragmentListeBinding
 import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 

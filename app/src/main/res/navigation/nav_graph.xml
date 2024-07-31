@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/listeFragment"
-        android:name="com.fatihden.roomdatabase.ListeFragment"
+        android:name="com.fatihden.roomdatabase.UI.ListeFragment"
         android:label="fragment_liste"
         tools:layout="@layout/fragment_liste" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/detayFragment"
-        android:name="com.fatihden.roomdatabase.DetayFragment"
+        android:name="com.fatihden.roomdatabase.UI.DetayFragment"
         android:label="fragment_detay"
         tools:layout="@layout/fragment_detay" >
         <action
