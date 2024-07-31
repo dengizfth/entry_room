@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
+import com.fatihden.roomdatabase.adapter.DetailAdapter
 import com.fatihden.roomdatabase.databinding.FragmentListeBinding
 import com.fatihden.roomdatabase.db.DetailDAO
 import com.fatihden.roomdatabase.db.DetailDatabase
@@ -71,10 +72,8 @@ class ListeFragment : Fragment() {
         )
     }
     private fun handleResponse(detaylar : List<Detail>) {
-        detaylar.forEach {
-            println(it.isim)
-            println(it.detay)
-        }
+        val adapter = DetailAdapter(detaylar)
+        binding.listeRW.adapter = adapter
     }
 
     override fun onDestroy() {
