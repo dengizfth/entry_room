@@ -5,21 +5,23 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.fatihden.roomdatabase.model.Detail
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
 
 @Dao
 interface DetailDAO {
 
     @Query("SELECT * FROM Detail")
-    fun getAll() : List<Detail>
+    fun getAll() :Flowable<List<Detail>>
 
     @Insert
-    fun insert(detay : Detail)
+    fun insert(detay : Detail) : Completable
 
     @Delete
-    fun delete(detay : Detail)
+    fun delete(detay : Detail) : Completable
 
     @Query("SELECT * FROM Detail WHERE id = :id")
-    fun findById(id : Int) : Detail
+    fun findById(id : Int) : Flowable<Detail>
 
 
 }
