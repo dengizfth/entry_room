@@ -10,6 +10,7 @@ import androidx.room.Room
 import com.fatihden.roomdatabase.databinding.FragmentListeBinding
 import com.fatihden.roomdatabase.db.DetailDAO
 import com.fatihden.roomdatabase.db.DetailDatabase
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 
 class ListeFragment : Fragment() {
@@ -19,6 +20,8 @@ class ListeFragment : Fragment() {
     // database : ( declaration )
     private lateinit var db : DetailDatabase
     private lateinit var detayDao : DetailDAO
+
+    private val mDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +59,8 @@ class ListeFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
+        mDisposable.clear()
     }
 
 
