@@ -321,5 +321,7 @@ class DetayFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
+        mDisposable.clear() // Ram'deki verileri temizledi
     }
 }
