@@ -19,12 +19,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation
 import androidx.room.Room
 import com.fatihden.roomdatabase.databinding.FragmentDetayBinding
 import com.fatihden.roomdatabase.db.DetailDAO
 import com.fatihden.roomdatabase.db.DetailDatabase
 import com.fatihden.roomdatabase.model.Detail
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -38,6 +42,9 @@ class DetayFragment : Fragment() {
 
     private var secilenGorsel : Uri? = null  // data/user/media/...
     private var secilenBitmap : Bitmap? = null
+    //mDisposale : kullan at . binlerce db'ye istek atılıp ram'de yer kaplar ve bu yer kaplamaları
+    // ve istekleri karışılarken uygulama kapatılınca Ram'e birikenleri çöpe atabiliriz ( onDestory'de için boşaltılır)
+    private val mDisposable = CompositeDisposable()
 
     // database : ( declaration )
     private lateinit var db : DetailDatabase
@@ -55,7 +62,13 @@ class DetayFragment : Fragment() {
             requireContext(),
             DetailDatabase::class.java ,
             "Detaylar"
-        ).build()
+        )
+            .build()
+            //java.lang.IllegalStateException: Cannot access database on the main thread since it may potentially lock the UI for a long period of time.
+            // hatasını Almamak için  . !!! Ama MainThread 'e yüklenmiş olucağımız için burada kullanmak doğru değil
+            // Bunun yerine Thread işlemi ile gerçekleştir ki uygulamaya aşırı yüklenmesin.
+            //.allowMainThreadQueries()
+
         detayDao = db.detailDao()
 
     }
@@ -91,8 +104,8 @@ class DetayFragment : Fragment() {
 
         // Kaydet :
         binding.kaydetBtn.setOnClickListener {
-            val name = binding.nameET.text.toString()
-            val detay = binding.detailET.text.toString()
+            val nameTxt = binding.nameET.text.toString()
+            val detayTxt = binding.detailET.text.toString()
 
             if( secilenBitmap != null) {
                 val kucukBitmap = kucukBitmapOlustur(secilenBitmap!! , 300)
@@ -100,11 +113,19 @@ class DetayFragment : Fragment() {
                 kucukBitmap.compress(Bitmap.CompressFormat.PNG , 50 ,outputStream)
                 val byteDizisi = outputStream.toByteArray()
 
-                val detayInsert = Detail(name , detay , byteDizisi)
-                detayDao.insert(detayInsert)
+                val detayInsert = Detail(nameTxt , detayTxt , byteDizisi)
+
+                // RxJava :
+                // Db'ye insert işlemi yapıldı.
+                //mDisposable ile ram'de birikenleri sonradan temizleme şansımız olucak
+                mDisposable.add(
+                    detayDao.insert(detayInsert)
+                        .subscribeOn(Schedulers.io()) // hem db hemde interne işlemler
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::handleResponseForInsert) // Sonucu aldıktan sonra içersindeki func'unu tetikler
+                )
 
             }
-
 
 
         }
@@ -215,6 +236,13 @@ class DetayFragment : Fragment() {
 
     }
 
+    // db işleminden sonra tetiklenilecek function
+    private fun handleResponseForInsert() {
+        // bir önceki fragmmente döndür
+        val action = DetayFragmentDirections.actionDetayFragmentToListeFragment()
+        Navigation.findNavController(requireView()).navigate(action)
+
+    }
     private fun kucukBitmapOlustur(
         kullaniciinSectigiBitmap: Bitmap ,
         maximum :Int
