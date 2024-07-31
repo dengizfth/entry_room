@@ -27,6 +27,31 @@ class DetayFragment : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        arguments?.let {
+            val bilgi = DetayFragmentArgs.fromBundle(it).bilgi
+
+            if (bilgi == "yeni"){
+                // Yeni tarif eklenecek :
+                binding.silBtn.isEnabled= false
+                binding.kaydetBtn.isEnabled =  true
+                binding.nameET.setText("")
+                binding.detailET.setText("")
+            } else {
+                // Eski eklenmiş gösteriliyor
+                binding.silBtn.isEnabled = true
+                binding.kaydetBtn.isEnabled =  false
+            }
+        }
+
+        binding.kaydetBtn.setOnClickListener {
+
+        }
+    }
+
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
