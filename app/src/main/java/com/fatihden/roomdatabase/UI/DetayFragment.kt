@@ -19,7 +19,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.room.Room
 import com.fatihden.roomdatabase.databinding.FragmentDetayBinding
+import com.fatihden.roomdatabase.db.DetailDAO
+import com.fatihden.roomdatabase.db.DetailDatabase
 import com.fatihden.roomdatabase.model.Detail
 import com.google.android.material.snackbar.Snackbar
 import java.io.ByteArrayOutputStream
@@ -36,6 +39,9 @@ class DetayFragment : Fragment() {
     private var secilenGorsel : Uri? = null  // data/user/media/...
     private var secilenBitmap : Bitmap? = null
 
+    // database : ( declaration )
+    private lateinit var db : DetailDatabase
+    private lateinit var tarifDao : DetailDAO
 
 
 
@@ -43,6 +49,15 @@ class DetayFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         registerLauncher()
+
+        // database ( initialize )
+        db = Room.databaseBuilder(
+            requireContext(),
+            DetailDatabase::class.java ,
+            "Detaylar"
+        ).build()
+        tarifDao = db.detailDao()
+
     }
 
     override fun onCreateView(
