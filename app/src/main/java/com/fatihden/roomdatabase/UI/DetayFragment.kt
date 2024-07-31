@@ -20,7 +20,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.fatihden.roomdatabase.databinding.FragmentDetayBinding
+import com.fatihden.roomdatabase.model.Detail
 import com.google.android.material.snackbar.Snackbar
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 
@@ -71,13 +73,31 @@ class DetayFragment : Fragment() {
                 binding.kaydetBtn.isEnabled =  false
             }
         }
+
         // Kaydet :
         binding.kaydetBtn.setOnClickListener {
+            val name = binding.nameET.text.toString()
+            val detay = binding.detailET.text.toString()
+
+            if( secilenBitmap != null) {
+                val kucukBitmap = kucukBitmapOlustur(secilenBitmap!! , 300)
+                val outputStream = ByteArrayOutputStream()
+                kucukBitmap.compress(Bitmap.CompressFormat.PNG , 50 ,outputStream)
+                val byteDizisi = outputStream.toByteArray()
+
+                val detay = Detail(name , detay , byteDizisi)
+
+            }
+
+
 
         }
+
+        // Sil :
         binding.silBtn.setOnClickListener {
 
         }
+
         // Resim Seçimi :
         binding.imageView.setOnClickListener {
 
@@ -179,6 +199,30 @@ class DetayFragment : Fragment() {
 
     }
 
+    private fun kucukBitmapOlustur(
+        kullaniciinSectigiBitmap: Bitmap ,
+        maximum :Int
+    ) : Bitmap {
+
+        var width = kullaniciinSectigiBitmap.width
+        var heigh = kullaniciinSectigiBitmap.height
+
+        val bitmapOrani : Double = width.toDouble() / heigh.toDouble()
+
+        if ( bitmapOrani > 1){
+            // görsel yatay
+            width = maximum
+            val kisaltilmisYukseklik = width / bitmapOrani
+            heigh = kisaltilmisYukseklik.toInt()
+        } else {
+            // görsel Dikey
+            heigh = maximum
+            val kisaltilmisGenislik = heigh * bitmapOrani
+            width = kisaltilmisGenislik.toInt()
+        }
+
+        return Bitmap.createScaledBitmap(kullaniciinSectigiBitmap, width, heigh, false)
+    }
     private fun registerLauncher() {
 
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
