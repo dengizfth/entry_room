@@ -6,11 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.fatihden.roomdatabase.databinding.FragmentListeBinding
 import com.fatihden.roomdatabase.db.DetailDAO
 import com.fatihden.roomdatabase.db.DetailDatabase
+import com.fatihden.roomdatabase.model.Detail
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class ListeFragment : Fragment() {
@@ -54,8 +58,25 @@ class ListeFragment : Fragment() {
             val action = ListeFragmentDirections.actionListeFragmentToDetayFragment("yeni",id=0)
             Navigation.findNavController(it).navigate(action)
         }
+        binding.listeRW.layoutManager = LinearLayoutManager( requireContext() )
+        verileriAl()
 
     }
+    private fun verileriAl(){
+        mDisposable.add(
+            detayDao.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResponse)
+        )
+    }
+    private fun handleResponse(detaylar : List<Detail>) {
+        detaylar.forEach {
+            println(it.isim)
+            println(it.detay)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
