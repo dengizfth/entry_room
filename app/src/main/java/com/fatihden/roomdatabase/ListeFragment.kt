@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import com.fatihden.roomdatabase.databinding.FragmentListeBinding
 
 
@@ -26,6 +27,17 @@ class ListeFragment : Fragment() {
         return view
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // + ekleme Floatin Action Button
+        binding.listeFAB.setOnClickListener{
+            val action = ListeFragmentDirections.actionListeFragmentToDetayFragment("yeni",id=0)
+            Navigation.findNavController(it).navigate(action)
+        }
+
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
