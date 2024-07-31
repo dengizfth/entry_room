@@ -6,15 +6,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.room.Room
 import com.fatihden.roomdatabase.databinding.FragmentListeBinding
+import com.fatihden.roomdatabase.db.DetailDAO
+import com.fatihden.roomdatabase.db.DetailDatabase
 
 
 class ListeFragment : Fragment() {
     private var _binding: FragmentListeBinding? = null
     private val binding get() = _binding!!
 
+    // database : ( declaration )
+    private lateinit var db : DetailDatabase
+    private lateinit var detayDao : DetailDAO
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // database ( initialize )
+        db = Room.databaseBuilder(
+            requireContext(),
+            DetailDatabase::class.java ,
+            "Detaylar"
+        ).build()
+        detayDao = db.detailDao()
 
     }
 
