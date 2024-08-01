@@ -50,8 +50,8 @@ class DetayFragment : Fragment() {
     // database : ( declaration )
     private lateinit var db : DetailDatabase
     private lateinit var detayDao : DetailDAO
-
-
+    // listede seçilen :
+    private var selectedDetail : Detail? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +96,7 @@ class DetayFragment : Fragment() {
                 binding.kaydetBtn.isEnabled =  true
                 binding.nameET.setText("")
                 binding.detailET.setText("")
+                selectedDetail = null
             } else {
                 // Eski eklenmiş gösteriliyor
                 binding.silBtn.isEnabled = true
@@ -142,6 +143,15 @@ class DetayFragment : Fragment() {
 
         // Sil :
         binding.silBtn.setOnClickListener {
+
+            if(selectedDetail != null){
+                mDisposable.add(
+                    detayDao.delete()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this:: handleResponseForInsert)
+                )
+            }
 
         }
 
@@ -252,11 +262,13 @@ class DetayFragment : Fragment() {
         binding.detailET.setText(detay.detay)
         val bitmap = BitmapFactory.decodeByteArray(detay.gorsel, 0,detay.gorsel.size)
         binding.imageView.setImageBitmap(bitmap)
+        selectedDetail = detay
     }
 
 
 
-    // db işleminden sonra tetiklenilecek function
+    // db işleminden sonra tetiklenilecek function ,
+    // Tetiklenince ListeFragment'e gider
     private fun handleResponseForInsert() {
         // bir önceki fragmmente döndür
         val action = DetayFragmentDirections.actionDetayFragmentToListeFragment()
