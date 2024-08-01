@@ -146,7 +146,7 @@ class DetayFragment : Fragment() {
 
             if(selectedDetail != null){
                 mDisposable.add(
-                    detayDao.delete()
+                    detayDao.delete(detay = selectedDetail!!)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this:: handleResponseForInsert)
