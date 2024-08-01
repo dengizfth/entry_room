@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -99,6 +100,15 @@ class DetayFragment : Fragment() {
                 // Eski eklenmiş gösteriliyor
                 binding.silBtn.isEnabled = true
                 binding.kaydetBtn.isEnabled =  false
+                val id = DetayFragmentArgs.fromBundle(it).id
+
+                mDisposable.add(
+                    detayDao.findById(id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::handleResponse)
+                )
+
             }
         }
 
@@ -235,6 +245,16 @@ class DetayFragment : Fragment() {
         }
 
     }
+    // RecyclerView Liste üzerinden tıklanan değerin id'sine göre
+    // verileri Detay Fragment'te gösteren func
+    private fun handleResponse(detay : Detail){
+        binding.nameET.setText(detay.isim)
+        binding.detailET.setText(detay.detay)
+        val bitmap = BitmapFactory.decodeByteArray(detay.gorsel, 0,detay.gorsel.size)
+        binding.imageView.setImageBitmap(bitmap)
+    }
+
+
 
     // db işleminden sonra tetiklenilecek function
     private fun handleResponseForInsert() {
